@@ -93,3 +93,4 @@ src/
 ```
 
 > Note: products you add or delete are saved in your browser’s `localStorage`. Use **Reset demo data** on the Manage page to restore the original items.
+# pawmart-next
