@@ -12,7 +12,15 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+export const firebaseConfigured = Object.values(firebaseConfig).every(
+  (value) => typeof value === "string" && value.length > 0 && !value.startsWith("your_")
+);
 
-// Auth is browser-only; during server prerendering it is null.
-export const auth = typeof window !== "undefined" ? getAuth(app) : null;
+const app = firebaseConfigured
+  ? getApps().length
+    ? getApp()
+    : initializeApp(firebaseConfig)
+  : null;
+
+// Auth is browser-only; during server prerendering or preview mode it is null.
+export const auth = app && typeof window !== "undefined" ? getAuth(app) : null;

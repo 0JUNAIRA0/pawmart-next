@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { authErrorMessage, useAuth } from "@/context/AuthContext";
+import { firebaseConfigured } from "@/lib/firebase";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -114,6 +115,12 @@ export default function AuthForm({ mode }) {
           </p>
         </div>
 
+        {!firebaseConfigured && (
+          <div role="status" className="alert alert-info alert-soft mb-5 rounded-2xl text-sm">
+            Preview mode: you can browse the site, but sign-in is unavailable right now.
+          </div>
+        )}
+
         {formError && (
           <div role="alert" className="alert alert-error alert-soft mb-5 rounded-2xl text-sm">{formError}</div>
         )}
@@ -155,7 +162,7 @@ export default function AuthForm({ mode }) {
             ) : null}
           </div>
 
-          <button type="submit" disabled={submitting} className="btn-brand w-full py-3!">
+          <button type="submit" disabled={submitting || !firebaseConfigured} className="btn-brand w-full py-3!">
             {submitting && <span className="loading loading-spinner loading-sm" />}
             {isRegister ? "Register" : "Login"}
           </button>
@@ -166,7 +173,7 @@ export default function AuthForm({ mode }) {
         <button
           type="button"
           onClick={onGoogle}
-          disabled={submitting}
+          disabled={submitting || !firebaseConfigured}
           className="flex w-full items-center justify-center gap-2 rounded-full border border-base-content/15 bg-base-100 py-3 font-semibold transition hover:border-primary/50 hover:shadow-md disabled:opacity-60"
         >
           <FcGoogle className="text-xl" /> Continue with Google

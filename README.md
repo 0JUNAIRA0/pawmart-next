@@ -50,6 +50,8 @@ npm run dev
 
 Open http://localhost:3000.
 
+Firebase configuration is optional for previewing the public pages. Without it, the site runs in preview mode and sign-in/account features are unavailable.
+
 **Firebase console setup**
 
 1. Go to **Authentication → Sign-in method** and enable **Email/Password** and **Google**.

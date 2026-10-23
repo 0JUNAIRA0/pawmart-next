@@ -10,7 +10,7 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth, firebaseConfigured } from "@/lib/firebase";
 
 const AuthContext = createContext(null);
 
@@ -18,9 +18,11 @@ const googleProvider = new GoogleAuthProvider();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(firebaseConfigured);
 
   useEffect(() => {
+    if (!auth) return;
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
@@ -29,19 +31,50 @@ export function AuthProvider({ children }) {
   }, []);
 
   const register = async (name, email, password, photoURL) => {
-    const { user: newUser } = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(newUser, { displayName: name, photoURL: photoURL || null });
+    if (!auth)
+      throw new Error(
+        "Sign-in is unavailable because Firebase hasn't been configured.",
+      );
+    const { user: newUser } = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+    await updateProfile(newUser, {
+      displayName: name,
+      photoURL: photoURL || null,
+    });
     // refresh state so the navbar shows the new name/photo immediately
     setUser({ ...auth.currentUser });
     return newUser;
   };
 
-  const login = (email, password) => signInWithEmailAndPassword(auth, email, password);
-  const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
-  const logout = () => signOut(auth);
+  const login = (email, password) => {
+    if (!auth)
+      throw new Error(
+        "Sign-in is unavailable because Firebase hasn't been configured.",
+      );
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+  const loginWithGoogle = () => {
+    if (!auth)
+      throw new Error(
+        "Sign-in is unavailable because Firebase hasn't been configured.",
+      );
+    return signInWithPopup(auth, googleProvider);
+  };
+  const logout = () => {
+    if (!auth)
+      throw new Error(
+        "Sign-in is unavailable because Firebase hasn't been configured.",
+      );
+    return signOut(auth);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, loginWithGoogle, logout }}>
+    <AuthContext.Provider
+      value={{ user, loading, register, login, loginWithGoogle, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -64,7 +97,8 @@ export function authErrorMessage(error) {
     "auth/invalid-email": "Please enter a valid email address.",
     "auth/popup-closed-by-user": "Google sign-in was closed before finishing.",
     "auth/too-many-requests": "Too many attempts. Please try again later.",
-    "auth/unauthorized-domain": "This domain is not authorized in Firebase. Add it under Authentication → Settings.",
+    "auth/unauthorized-domain":
+      "This domain is not authorized in Firebase. Add it under Authentication → Settings.",
   };
   return map[error?.code] || error?.message || "Something went wrong.";
 }
