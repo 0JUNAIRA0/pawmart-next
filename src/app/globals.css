@@ -1,26 +1,105 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@plugin "daisyui" {
+  themes: false;
 }
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  color-scheme: light;
+  --color-primary: #e11d2e;
+  --color-primary-content: #ffffff;
+  --color-secondary: #362920;
+  --color-base-100: #fff8f7;
+  --color-base-200: #fdeeee;
+  --color-base-300: #f6dcdc;
+  --color-base-content: #2b1d17;
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  prefersdark: true;
+  color-scheme: dark;
+  --color-primary: #ff4d4d;
+  --color-primary-content: #ffffff;
+  --color-secondary: #f3e7e2;
+  --color-base-100: #1a0b0b;
+  --color-base-200: #241010;
+  --color-base-300: #331616;
+  --color-base-content: #f6eeee;
+}
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-base-100 text-base-content font-sans;
+}
+
+/* ---------- Brand utilities ---------- */
+.gradient-text {
+  @apply bg-linear-to-r from-[#b00020] to-[#ff5722] bg-clip-text text-transparent;
+}
+
+.btn-brand {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-[#b00020] to-[#ff5722] px-6 py-2.5 font-semibold text-white shadow-[0_6px_20px_-6px_rgba(225,29,46,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_-6px_rgba(225,29,46,0.75)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0;
+}
+
+.btn-ghost-brand {
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-primary/40 px-6 py-2.5 font-semibold text-primary transition-all duration-300 hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary;
+}
+
+.glass {
+  @apply border border-white/40 bg-white/60 backdrop-blur-md shadow-[0_8px_32px_0_rgba(225,29,46,0.10)] dark:border-white/10 dark:bg-white/5 dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.35)];
+}
+
+.card-hover {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_-12px_rgba(225,29,46,0.35)] focus-within:-translate-y-1 focus-within:shadow-[0_16px_40px_-12px_rgba(225,29,46,0.35)];
+}
+
+.section-title {
+  @apply text-3xl font-bold tracking-tight sm:text-4xl;
+}
+
+.page-bg {
+  background-color: var(--color-base-100);
+  background-image:
+    radial-gradient(at 15% 5%, rgba(255, 80, 80, 0.18) 0px, transparent 45%),
+    radial-gradient(at 85% 10%, rgba(255, 140, 140, 0.18) 0px, transparent 45%),
+    radial-gradient(at 20% 90%, rgba(255, 100, 100, 0.14) 0px, transparent 45%),
+    radial-gradient(at 85% 85%, rgba(255, 60, 60, 0.14) 0px, transparent 45%);
+  background-attachment: fixed;
+}
+
+.input-brand {
+  @apply input w-full rounded-xl bg-base-100/70 focus:border-primary focus:outline-primary/40;
+}
+
+.fade-up {
+  animation: fadeUp 0.6s ease both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
